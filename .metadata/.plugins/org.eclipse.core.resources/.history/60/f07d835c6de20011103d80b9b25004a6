@@ -1,0 +1,5 @@
+package skillsoa.config;
+
+public class SecurityConfiguration {
+
+}

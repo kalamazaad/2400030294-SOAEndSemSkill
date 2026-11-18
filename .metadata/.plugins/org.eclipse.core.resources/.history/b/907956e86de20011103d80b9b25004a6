@@ -1,0 +1,58 @@
+
+package skillsoa.service;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
+@Service
+public class JWTService {
+
+    private final String SECRET_KEY =
+        "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+
+    private final SecretKey key =
+        Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+
+    // Generate JWT Token
+    public String generateToken(Long user_id, String username) {
+
+        Map<String, Object> payload = new HashMap<>();
+
+        payload.put("user_id", user_id);
+        payload.put("username", username);
+
+        return Jwts.builder()
+                .claims(payload)
+                .issuedAt(new Date())
+                .expiration(new Date(
+                    System.currentTimeMillis() + 86400000))
+                .signWith(key)
+                .compact();
+    }
+
+    // Validate JWT Token
+    public Map<String, Object> validateToken(String token) {
+
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        Map<String, Object> payload = new HashMap<>();
+
+        payload.put("user_id", claims.get("user_id"));
+        payload.put("username", claims.get("username"));
+
+        return payload;
+    }
+}

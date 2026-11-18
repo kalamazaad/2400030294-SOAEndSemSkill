@@ -1,0 +1,5 @@
+package skillsoa.repository;
+
+public interface UsersRepository {
+
+}
